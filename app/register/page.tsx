@@ -1,4 +1,4 @@
-'use client'
+ 'use client'
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
@@ -15,13 +15,12 @@ export default function RegisterPage() {
     e.preventDefault()
     setLoading(true)
 
-    // 1. Mendaftarkan User ke Auth Supabase
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
-          full_name: fullName, // Menyimpan nama di metadata
+          full_name: fullName, 
         }
       }
     })
@@ -36,50 +35,68 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6 text-black">
-      <div className="max-w-md w-full bg-white rounded-[2.5rem] shadow-xl p-10 border border-gray-100">
+    // Background gradasi hutan hijau (sama dengan Login)
+    <div className="min-h-screen bg-gradient-to-br from-green-900 via-emerald-800 to-teal-900 flex items-center justify-center p-6 text-black font-sans relative overflow-hidden">
+      
+      {/* Ornamen daun/pohon abstrak */}
+      <div className="absolute top-[-5%] right-[-5%] w-64 h-64 bg-green-500/20 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-[-5%] left-[-5%] w-72 h-72 bg-emerald-400/20 rounded-full blur-3xl"></div>
+
+      {/* Card dengan tekstur kayu (Soft Wood) */}
+      <div className="max-w-md w-full bg-[#fdf8f1] rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] p-10 border-8 border-[#e5d3b3] relative z-10">
+        
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-black tracking-tighter">BUAT AKUN BARU 👤</h1>
-          <p className="text-gray-400 font-medium mt-2">Daftar sekarang untuk akses materi.</p>
+          <div className="text-5xl mb-4 drop-shadow-sm">🌱</div>
+          <h1 className="text-3xl font-black tracking-tighter text-[#4a3728]">DAFTAR BARU</h1>
+          <div className="h-1 w-16 bg-green-600 mx-auto rounded-full mt-1"></div>
+          <p className="text-[#8b7355] font-medium mt-4 italic text-sm">Mulai perjalananmu di Hutan Ilmu SI-DUGI.</p>
         </div>
 
         <form onSubmit={handleRegister} className="space-y-4">
           <div>
-            <label className="block text-xs font-black uppercase text-gray-400 mb-2 ml-1">Nama Lengkap</label>
+            <label className="block text-[10px] font-black uppercase text-[#8b7355] mb-2 ml-1 tracking-widest">Nama Lengkap</label>
             <input 
               type="text" required value={fullName} onChange={(e) => setFullName(e.target.value)}
-              className="w-full p-4 bg-gray-50 rounded-2xl border-2 border-transparent focus:border-blue-500 outline-none font-bold transition-all"
+              className="w-full p-4 bg-[#f3e9dc] rounded-2xl border-2 border-transparent focus:border-green-600 focus:bg-white outline-none font-bold transition-all placeholder:text-[#cbb493] text-[#4a3728]"
               placeholder="Joko Susilo"
             />
           </div>
+
           <div>
-            <label className="block text-xs font-black uppercase text-gray-400 mb-2 ml-1">Alamat Email</label>
+            <label className="block text-[10px] font-black uppercase text-[#8b7355] mb-2 ml-1 tracking-widest">Alamat Email</label>
             <input 
               type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-4 bg-gray-50 rounded-2xl border-2 border-transparent focus:border-blue-500 outline-none font-bold transition-all"
+              className="w-full p-4 bg-[#f3e9dc] rounded-2xl border-2 border-transparent focus:border-green-600 focus:bg-white outline-none font-bold transition-all placeholder:text-[#cbb493] text-[#4a3728]"
               placeholder="nama@email.com"
             />
           </div>
+
           <div>
-            <label className="block text-xs font-black uppercase text-gray-400 mb-2 ml-1">Password</label>
+            <label className="block text-[10px] font-black uppercase text-[#8b7355] mb-2 ml-1 tracking-widest">Password</label>
             <input 
               type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-4 bg-gray-50 rounded-2xl border-2 border-transparent focus:border-blue-500 outline-none font-bold transition-all"
+              className="w-full p-4 bg-[#f3e9dc] rounded-2xl border-2 border-transparent focus:border-green-600 focus:bg-white outline-none font-bold transition-all placeholder:text-[#cbb493] text-[#4a3728]"
               placeholder="••••••••"
             />
           </div>
 
           <button 
             disabled={loading}
-            className="w-full py-4 bg-blue-600 text-white rounded-2xl font-black shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all active:scale-95 disabled:opacity-50"
+            className="w-full py-4 bg-[#2d5a27] text-white rounded-2xl font-black shadow-lg shadow-green-900/30 hover:bg-[#1f3f1b] hover:-translate-y-1 transition-all active:scale-95 disabled:opacity-50 disabled:translate-y-0"
           >
             {loading ? 'MEMPROSES...' : 'DAFTAR SEKARANG'}
           </button>
         </form>
 
-        <p className="text-center mt-8 text-sm font-bold text-gray-400">
-          Sudah punya akun? <Link href="/login" className="text-blue-600 hover:underline">Login di sini</Link>
-        </p>
+        <div className="mt-10 pt-8 border-t border-[#e5d3b3] text-center">
+          <p className="text-sm font-bold text-[#8b7355]">
+            Sudah punya akun? 
+            <Link href="/login" className="ml-2 text-green-700 hover:underline decoration-2 underline-offset-4">
+              Login di sini
+            </Link>
+          </p>
+        </div>
+
       </div>
     </div>
   )
