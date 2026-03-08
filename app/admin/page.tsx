@@ -168,7 +168,8 @@ export default function AdminPage() {
       <Sidebar />
       
       {/* MAIN CONTAINER DENGAN MOTIF KAYU */}
-      <main className="flex-grow ml-64 p-10 pb-32 relative min-h-screen">
+      {/* <main className="flex-grow ml-64 p-10 pb-32 relative min-h-screen"> */}
+      <main className="flex-grow ml-20 md:ml-72 p-4 md:p-8 pb-32 transition-all duration-300 relative min-h-screen">
         {/* Layer Background Kayu (Fixed agar tidak ikut scroll) */}
         <div 
           className="fixed inset-0 z-[-1]" 
