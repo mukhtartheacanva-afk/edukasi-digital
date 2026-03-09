@@ -1,5 +1,5 @@
- 'use client'
-import { useEffect, useState } from 'react'
+'use client'
+import { useEffect, useState, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 import Sidebar from '@/components/Sidebar'
 import { useRouter } from 'next/navigation'
@@ -14,9 +14,11 @@ export default function AdminPage() {
   const [lessons, setLessons] = useState<any[]>([])
   const [regs, setRegs] = useState<any[]>([])
 
-  // State Edit User
-  const [editUserName, setEditUserName] = useState('')
-  const [isEditingUser, setIsEditingUser] = useState<string | null>(null)
+  // State Dropdown Custom
+  const [isMatDropOpen, setIsMatDropOpen] = useState(false)
+  const [isRegDropOpen, setIsRegDropOpen] = useState(false)
+  const matDropRef = useRef<HTMLDivElement>(null)
+  const regDropRef = useRef<HTMLDivElement>(null)
 
   // State Pencarian & Pagination
   const itemsPerPage = 5
@@ -56,6 +58,13 @@ export default function AdminPage() {
       setLoading(false)
     }
     if (mounted) initAdmin()
+
+    const handleClick = (e: MouseEvent) => {
+      if (matDropRef.current && !matDropRef.current.contains(e.target as Node)) setIsMatDropOpen(false)
+      if (regDropRef.current && !regDropRef.current.contains(e.target as Node)) setIsRegDropOpen(false)
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
   }, [mounted, router])
 
   const fetchData = async () => {
@@ -146,9 +155,12 @@ export default function AdminPage() {
   }
 
   if (!mounted) return null
-  if (loading) return <div className="min-h-screen flex items-center justify-center font-black text-black">LOADING...</div>
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-[#e3d0ba] font-black text-amber-900 italic">
+        <div className="animate-pulse">MENYIAPKAN RUANG ADMIN...</div>
+    </div>
+  )
 
-  // Logic Filter & Pagination
   const filteredUsers = users.filter(u => u.email?.toLowerCase().includes(searchUser.toLowerCase()) || u.full_name?.toLowerCase().includes(searchUser.toLowerCase()))
   const currentUsers = filteredUsers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
   const totalPagesUser = Math.ceil(filteredUsers.length / itemsPerPage)
@@ -164,200 +176,273 @@ export default function AdminPage() {
   const totalPagesReg = Math.max(1, Math.ceil(filteredRegs.length / itemsPerPage))
 
   return (
-    <div className="min-h-screen flex text-black">
+    <div className="min-h-screen flex text-[#4a3728]">
+      {/* STYLE KHUSUS UNTUK SCROLLBAR DROPDOWN */}
+      <style jsx global>{`
+        .custom-dropdown-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-dropdown-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-dropdown-scroll::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
+        .custom-dropdown-scroll::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+      `}</style>
+
       <Sidebar />
       
-      {/* MAIN CONTAINER DENGAN MOTIF KAYU */}
-      {/* <main className="flex-grow ml-64 p-10 pb-32 relative min-h-screen"> */}
       <main className="flex-grow ml-20 md:ml-72 p-4 md:p-8 pb-32 transition-all duration-300 relative min-h-screen">
-        {/* Layer Background Kayu (Fixed agar tidak ikut scroll) */}
         <div 
           className="fixed inset-0 z-[-1]" 
           style={{ 
             backgroundImage: `url('https://www.transparenttextures.com/patterns/wood-pattern.png')`,
-            backgroundColor: '#e3d0ba', // Warna kayu Oak alami
+            backgroundColor: '#e3d0ba',
             backgroundRepeat: 'repeat'
           }}
         />
-        {/* Layer Overlay Halus agar kontras */}
         <div className="fixed inset-0 z-[-1] bg-white/10 pointer-events-none" />
 
-        <header className="mb-12 relative z-10">
-          <h1 className="text-5xl font-black italic tracking-tighter uppercase drop-shadow-sm">Admin Command ⚡</h1>
-          <p className="text-[10px] font-bold text-amber-900 mt-1 uppercase tracking-widest">Management Dashboard Wood Edition v3.0</p>
+        <header className="mb-12 relative z-10 flex justify-between items-center">
+          <div>
+            <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter uppercase drop-shadow-md text-[#2d5a27]">Admin Command ⚡</h1>
+            <p className="text-[10px] font-black text-amber-900 mt-1 uppercase tracking-widest bg-white/40 inline-block px-3 py-1 rounded-full">Management Dashboard Wood Edition v3.0</p>
+          </div>
+          <div className="text-right hidden md:block">
+             <div className="text-xs font-black uppercase text-[#2d5a27]">Status Server</div>
+             <div className="text-[10px] font-bold text-green-700 animate-pulse">● ONLINE</div>
+          </div>
         </header>
 
         {/* 1. MANAJEMEN USER */}
-        <section className="mb-16 relative z-10">
+        <section className="mb-20 relative z-10">
           <div className="flex flex-col md:flex-row justify-between items-end mb-6 gap-4">
             <div>
-              <h2 className="text-xl font-black text-amber-900 italic uppercase">Persetujuan Pengguna</h2>
-              <p className="text-[10px] text-amber-800 font-bold uppercase tracking-widest">Total: {filteredUsers.length} Pengguna</p>
+              <h2 className="text-2xl font-black text-amber-900 italic uppercase flex items-center gap-3">
+                <span className="bg-amber-900 text-white w-8 h-8 flex items-center justify-center rounded-lg text-sm not-italic">01</span>
+                Persetujuan Pengguna
+              </h2>
             </div>
             <div className="relative w-full md:w-72">
-              <input type="text" placeholder="Cari user..." value={searchUser} onChange={(e) => { setSearchUser(e.target.value); setCurrentPage(1); }} className="w-full p-3 pl-10 bg-white/80 backdrop-blur-md border border-amber-200 rounded-2xl text-xs font-bold outline-none shadow-sm focus:bg-white transition-all" />
-              <span className="absolute left-4 top-3.5">🔍</span>
+              <input type="text" placeholder="Cari user..." value={searchUser} onChange={(e) => { setSearchUser(e.target.value); setCurrentPage(1); }} className="w-full p-4 pl-12 bg-white/80 backdrop-blur-md border-2 border-amber-200 rounded-2xl text-xs font-bold outline-none shadow-lg focus:border-amber-900 transition-all placeholder:text-amber-300" />
+              <span className="absolute left-4 top-4 text-lg">🔍</span>
             </div>
           </div>
-          <div className="bg-white/70 backdrop-blur-lg rounded-[2.5rem] shadow-2xl border border-white/50 overflow-hidden font-bold">
+          <div className="bg-white/70 backdrop-blur-lg rounded-[3rem] shadow-2xl border-2 border-white/50 overflow-hidden">
             <table className="w-full text-left">
               <thead className="bg-amber-900 text-[10px] text-amber-100 font-black uppercase tracking-widest">
-                <tr><th className="p-6">User / Profile</th><th className="p-6">Status</th><th className="p-6 text-right">Aksi</th></tr>
+                <tr><th className="p-8">User / Profile</th><th className="p-8">Status</th><th className="p-8 text-right">Aksi</th></tr>
               </thead>
-              <tbody className="divide-y divide-amber-100 font-bold">
+              <tbody className="divide-y-2 divide-amber-100 font-bold">
                 {currentUsers.map((u) => (
-                  <tr key={u.id} className="hover:bg-white/40 transition-all font-bold">
-                    <td className="p-6">
-                      <div className="text-sm">{u.email}</div>
-                      <div className="text-[10px] text-amber-800 uppercase">{u.full_name || 'No Name'}</div>
+                  <tr key={u.id} className="hover:bg-white/60 transition-all group">
+                    <td className="p-8">
+                      <div className="text-base font-black text-[#4a3728]">{u.email}</div>
+                      <div className="text-[10px] text-amber-700 uppercase tracking-tighter">{u.full_name || 'No Name'}</div>
                     </td>
-                    <td className="p-6">
-                      {u.is_approved ? <span className="text-green-700 text-[10px]">AKTIF ✅</span> : <span className="text-amber-700 text-[10px] animate-pulse font-black">MENUNGGU ⏳</span>}
+                    <td className="p-8">
+                      {u.is_approved ? 
+                        <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[9px] font-black border border-green-200">AKTIF ✅</span> : 
+                        <span className="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-[9px] font-black animate-pulse border border-amber-200">MENUNGGU ⏳</span>
+                      }
                     </td>
-                    <td className="p-6 text-right">
-                      {!u.is_approved && <button onClick={() => handleApprove(u.id)} className="bg-amber-800 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase mr-2 shadow-lg">Approve</button>}
+                    <td className="p-8 text-right space-x-4">
+                      {!u.is_approved && <button onClick={() => handleApprove(u.id)} className="bg-amber-900 text-white px-6 py-2.5 rounded-xl text-[10px] font-black uppercase shadow-lg hover:scale-105 active:scale-95 transition-all">Approve</button>}
                       <button onClick={() => handleDelete('profiles', u.id)} className="text-red-600 text-[10px] font-black uppercase hover:underline">Hapus</button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            <div className="p-5 bg-amber-900/5 flex justify-center items-center gap-6 border-t border-amber-100">
-              <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)} className="px-4 py-2 bg-white/80 border border-amber-200 rounded-xl text-[10px] font-black disabled:opacity-30">PREV</button>
-              <span className="text-[10px] font-black text-amber-900 uppercase">HAL {currentPage} / {totalPagesUser}</span>
-              <button disabled={currentPage >= totalPagesUser} onClick={() => setCurrentPage(p => p + 1)} className="px-4 py-2 bg-white/80 border border-amber-200 rounded-xl text-[10px] font-black disabled:opacity-30">NEXT</button>
+            <div className="p-6 bg-amber-900/10 flex justify-center items-center gap-10 border-t-2 border-amber-100">
+              <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)} className="px-6 py-2 bg-white border-2 border-amber-200 rounded-xl text-[10px] font-black disabled:opacity-30 hover:border-amber-900 transition-colors">PREV</button>
+              <span className="text-xs font-black text-amber-900 uppercase">HAL {currentPage} / {totalPagesUser}</span>
+              <button disabled={currentPage >= totalPagesUser} onClick={() => setCurrentPage(p => p + 1)} className="px-6 py-2 bg-white border-2 border-amber-200 rounded-xl text-[10px] font-black disabled:opacity-30 hover:border-amber-900 transition-colors">NEXT</button>
             </div>
           </div>
         </section>
 
         {/* 2. MANAJEMEN MATERI */}
-        <section className="mb-16 relative z-10">
-          <div className="flex justify-between items-end mb-6">
-            <h2 className="text-xl font-black text-blue-900 italic uppercase">Kelola Materi Video</h2>
-            <div className="flex items-center gap-4">
-               <div className="bg-blue-100/50 backdrop-blur-sm px-4 py-2 rounded-2xl border border-blue-200 flex items-center gap-2">
-                 <span className="text-[10px] font-black text-blue-800 uppercase">Import:</span>
-                 <input type="file" accept=".csv" onChange={(e) => handleImportCSV(e, 'materi')} className="text-[10px] font-bold cursor-pointer w-40" />
-               </div>
-               
-               <select value={filterMateriCat} onChange={(e) => { setFilterMateriCat(e.target.value); setPageMateri(1); }} className="p-3 bg-white/80 border border-blue-200 rounded-2xl text-[10px] font-black uppercase outline-none shadow-sm focus:bg-white">
-                 {categoriesMateri.map(cat => <option key={cat} value={cat}>{cat}</option>)}
-               </select>
+        <section className="mb-20 relative z-10">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-6 gap-6">
+            <h2 className="text-2xl font-black text-blue-900 italic uppercase flex items-center gap-3">
+              <span className="bg-blue-900 text-white w-8 h-8 flex items-center justify-center rounded-lg text-sm not-italic">02</span>
+              Kelola Materi Video
+            </h2>
+            <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                <div className="bg-blue-900/10 backdrop-blur-sm px-4 py-3 rounded-2xl border-2 border-blue-200 flex items-center gap-3">
+                  <span className="text-[9px] font-black text-blue-900 uppercase">Import CSV:</span>
+                  <input type="file" accept=".csv" onChange={(e) => handleImportCSV(e, 'materi')} className="text-[9px] font-bold cursor-pointer w-32" />
+                </div>
+                
+                {/* UPDATE: Dropdown Materi dengan Scroll */}
+                <div className="relative" ref={matDropRef}>
+                    <button onClick={() => setIsMatDropOpen(!isMatDropOpen)} className="p-4 px-6 bg-white/80 border-2 border-blue-200 rounded-2xl text-[10px] font-black uppercase shadow-lg min-w-[140px] flex justify-between items-center gap-4">
+                        {filterMateriCat} <span>▼</span>
+                    </button>
+                    {isMatDropOpen && (
+                        <div className="absolute top-full mt-2 w-full bg-white border-2 border-blue-100 rounded-xl shadow-2xl z-50 overflow-hidden">
+                            <div className="max-h-[250px] overflow-y-auto custom-dropdown-scroll">
+                              {categoriesMateri.map(cat => (
+                                  <div key={cat} onClick={() => { setFilterMateriCat(cat); setPageMateri(1); setIsMatDropOpen(false); }} className="p-3 text-[10px] font-black uppercase hover:bg-blue-50 cursor-pointer border-b border-blue-50 last:border-none">
+                                      {cat}
+                                  </div>
+                              ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
 
-               <div className="relative w-60">
-                 <input type="text" placeholder="Cari materi..." value={searchMateri} onChange={(e) => { setSearchMateri(e.target.value); setPageMateri(1); }} className="w-full p-3 pl-10 bg-white/80 border border-blue-200 rounded-2xl text-xs font-bold outline-none shadow-sm focus:bg-white" />
-                 <span className="absolute left-4 top-3.5">🔍</span>
-               </div>
+                <div className="relative flex-grow md:w-64">
+                  <input type="text" placeholder="Cari materi..." value={searchMateri} onChange={(e) => { setSearchMateri(e.target.value); setPageMateri(1); }} className="w-full p-4 pl-12 bg-white/80 border-2 border-blue-200 rounded-2xl text-xs font-bold outline-none shadow-lg focus:border-blue-900" />
+                  <span className="absolute left-4 top-4 text-lg">🔍</span>
+                </div>
             </div>
           </div>
           
-          <div className="bg-white/80 backdrop-blur-xl p-8 rounded-[2.5rem] shadow-2xl border border-blue-200 mb-6">
-            <form onSubmit={submitMateri} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <input type="text" placeholder="Judul Materi" value={materiTitle} onChange={e => setMateriTitle(e.target.value)} required className="p-4 bg-white/50 rounded-2xl text-sm outline-none border-2 border-transparent focus:border-blue-500 shadow-inner" />
-                <input type="text" placeholder="Link YouTube Embed" value={materiUrl} onChange={e => setMateriUrl(e.target.value)} required className="p-4 bg-white/50 rounded-2xl text-sm outline-none border-2 border-transparent focus:border-blue-500 shadow-inner" />
-                <div className="relative">
-                  <input type="text" list="materi-cats" placeholder="Kategori" value={materiCategory} onChange={e => setMateriCategory(e.target.value)} className="w-full p-4 bg-white/50 rounded-2xl text-sm outline-none border-2 border-transparent focus:border-blue-500 shadow-inner" />
-                  <datalist id="materi-cats">
-                    {categoriesMateri.filter(c => c !== 'Semua').map((cat, i) => <option key={i} value={cat} />)}
-                  </datalist>
+          <div className="bg-white/80 backdrop-blur-xl p-10 rounded-[3rem] shadow-2xl border-2 border-blue-200 mb-8">
+            <form onSubmit={submitMateri} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase ml-2 text-blue-900">Judul Materi</label>
+                    <input type="text" placeholder="Contoh: Pengenalan Dasar" value={materiTitle} onChange={e => setMateriTitle(e.target.value)} required className="w-full p-4 bg-white rounded-2xl text-sm font-bold outline-none border-2 border-blue-50 focus:border-blue-500 shadow-inner" />
+                </div>
+                <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase ml-2 text-blue-900">YouTube URL</label>
+                    <input type="text" placeholder="https://youtube.com/..." value={materiUrl} onChange={e => setMateriUrl(e.target.value)} required className="w-full p-4 bg-white rounded-2xl text-sm font-bold outline-none border-2 border-blue-50 focus:border-blue-500 shadow-inner" />
+                </div>
+                <div className="space-y-2 relative">
+                    <label className="text-[10px] font-black uppercase ml-2 text-blue-900">Kategori</label>
+                    <input type="text" list="materi-cats" placeholder="Pilih/Ketik..." value={materiCategory} onChange={e => setMateriCategory(e.target.value)} className="w-full p-4 bg-white rounded-2xl text-sm font-bold outline-none border-2 border-blue-50 focus:border-blue-500 shadow-inner" />
+                    <datalist id="materi-cats">
+                        {categoriesMateri.filter(c => c !== 'Semua').map((cat, i) => <option key={i} value={cat} />)}
+                    </datalist>
                 </div>
               </div>
-              <textarea placeholder="Deskripsi..." value={materiDesc} onChange={e => setMateriDesc(e.target.value)} className="w-full p-4 bg-white/50 rounded-2xl h-20 text-sm outline-none border-2 border-transparent focus:border-blue-500 shadow-inner" />
-              <button type="submit" className="w-full py-4 bg-blue-900 text-white rounded-2xl font-black uppercase text-xs shadow-xl hover:scale-[1.01] transition-transform">{editingItem ? "Update Materi" : "Simpan Materi 🚀"}</button>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase ml-2 text-blue-900">Deskripsi Singkat</label>
+                <textarea placeholder="Jelaskan isi video ini..." value={materiDesc} onChange={e => setMateriDesc(e.target.value)} className="w-full p-5 bg-white rounded-3xl h-24 text-sm font-bold outline-none border-2 border-blue-50 focus:border-blue-500 shadow-inner" />
+              </div>
+              <button type="submit" className="w-full py-5 bg-blue-900 text-white rounded-2xl font-black uppercase text-xs shadow-xl hover:bg-blue-950 hover:translate-y-[-2px] active:translate-y-0 transition-all">
+                {editingItem ? "Update Materi Sekarang ⚡" : "Posting Materi Baru 🚀"}
+              </button>
             </form>
           </div>
           
-          <div className="bg-white/70 backdrop-blur-lg rounded-[2.5rem] shadow-xl border border-blue-100 overflow-hidden font-bold">
+          <div className="bg-white/70 backdrop-blur-lg rounded-[3rem] shadow-xl border-2 border-blue-100 overflow-hidden">
             <table className="w-full text-left">
               <thead className="bg-blue-900 text-[10px] font-black uppercase text-blue-100 tracking-widest">
-                <tr><th className="p-4">Judul Materi</th><th className="p-4 text-right">Aksi</th></tr>
+                <tr><th className="p-6 px-8">Materi & Kategori</th><th className="p-6 px-8 text-right">Aksi</th></tr>
               </thead>
-              <tbody className="divide-y divide-blue-50">
+              <tbody className="divide-y-2 divide-blue-50">
                 {currentLessons.map((ls) => (
-                  <tr key={ls.id} className="hover:bg-blue-50/50">
-                    <td className="p-4 text-sm font-black">
-                      <div className="flex flex-col">
-                        <span>{ls.title}</span>
-                        <span className="text-[10px] text-blue-700 font-bold uppercase">📁 {ls.category || 'Umum'}</span>
+                  <tr key={ls.id} className="hover:bg-blue-50/80 transition-all font-black">
+                    <td className="p-6 px-8">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-blue-100 flex items-center justify-center rounded-full text-lg">🎥</div>
+                        <div>
+                            <div className="text-base text-blue-900 uppercase italic">{ls.title}</div>
+                            <div className="text-[9px] text-blue-500 font-black uppercase mt-1 tracking-widest">📂 {ls.category || 'Umum'}</div>
+                        </div>
                       </div>
                     </td>
-                    <td className="p-4 text-right space-x-3">
-                      <button onClick={() => openEdit(ls, 'lesson')} className="text-blue-700 text-xs font-black">Edit</button>
-                      <button onClick={() => handleDelete('lessons', ls.id)} className="text-red-600 text-xs font-black">Hapus</button>
+                    <td className="p-6 px-8 text-right space-x-6">
+                      <button onClick={() => openEdit(ls, 'lesson')} className="text-blue-700 text-[10px] font-black uppercase hover:underline">Edit</button>
+                      <button onClick={() => handleDelete('lessons', ls.id)} className="text-red-600 text-[10px] font-black uppercase hover:underline">Hapus</button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            <div className="p-4 bg-blue-900/5 flex justify-center items-center gap-4 border-t border-blue-100">
-               <button disabled={pageMateri === 1} onClick={() => setPageMateri(p => p - 1)} className="px-4 py-2 bg-white border border-blue-200 rounded-xl text-[10px] font-black disabled:opacity-30">PREV</button>
-               <span className="text-[10px] font-black text-blue-900">HAL {pageMateri} / {totalPagesMateri}</span>
-               <button disabled={pageMateri >= totalPagesMateri} onClick={() => setPageMateri(p => p + 1)} className="px-4 py-2 bg-white border border-blue-200 rounded-xl text-[10px] font-black disabled:opacity-30">NEXT</button>
+            <div className="p-6 bg-blue-900/5 flex justify-center items-center gap-10 border-t-2 border-blue-100">
+                <button disabled={pageMateri === 1} onClick={() => setPageMateri(p => p - 1)} className="px-6 py-2 bg-white border-2 border-blue-200 rounded-xl text-[10px] font-black disabled:opacity-30">PREV</button>
+                <span className="text-xs font-black text-blue-900 uppercase">HAL {pageMateri} / {totalPagesMateri}</span>
+                <button disabled={pageMateri >= totalPagesMateri} onClick={() => setPageMateri(p => p + 1)} className="px-6 py-2 bg-white border-2 border-blue-200 rounded-xl text-[10px] font-black disabled:opacity-30">NEXT</button>
             </div>
           </div>
         </section>
 
         {/* 3. MANAJEMEN PERATURAN */}
         <section className="relative z-10">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-6 gap-4">
-            <div>
-              <h2 className="text-xl font-black text-green-900 italic uppercase">Kelola Dokumen Peraturan</h2>
-              <p className="text-[10px] text-green-800 font-bold uppercase tracking-widest">Total: {filteredRegs.length} Dokumen</p>
-            </div>
+          <div className="flex flex-col md:flex-row justify-between items-end mb-6 gap-6">
+            <h2 className="text-2xl font-black text-[#2d5a27] italic uppercase flex items-center gap-3">
+              <span className="bg-[#2d5a27] text-white w-8 h-8 flex items-center justify-center rounded-lg text-sm not-italic">03</span>
+              Kelola Dokumen Peraturan
+            </h2>
             
-            <div className="flex gap-2 w-full md:w-auto items-center">
-              <div className="bg-green-100/50 backdrop-blur-sm px-4 py-2 rounded-2xl border border-green-200 flex items-center gap-2">
-                 <span className="text-[10px] font-black text-green-800 uppercase">Import:</span>
-                 <input type="file" accept=".csv" onChange={(e) => handleImportCSV(e, 'reg')} className="text-[10px] font-bold cursor-pointer w-40" />
+            <div className="flex flex-wrap gap-3 w-full md:w-auto items-center">
+              <div className="bg-green-900/10 backdrop-blur-sm px-4 py-3 rounded-2xl border-2 border-green-200 flex items-center gap-3">
+                  <span className="text-[9px] font-black text-green-900 uppercase">Import CSV:</span>
+                  <input type="file" accept=".csv" onChange={(e) => handleImportCSV(e, 'reg')} className="text-[9px] font-bold cursor-pointer w-32" />
               </div>
 
-              <select value={filterRegCat} onChange={(e) => { setFilterRegCat(e.target.value); setPageReg(1); }} className="p-3 bg-white/80 border border-green-200 rounded-2xl text-[10px] font-black uppercase outline-none shadow-sm focus:bg-white">
-                {categoriesReg.map(cat => <option key={cat} value={cat}>{cat}</option>)}
-              </select>
+              {/* UPDATE: Dropdown Peraturan dengan Scroll */}
+              <div className="relative" ref={regDropRef}>
+                  <button onClick={() => setIsRegDropOpen(!isRegDropOpen)} className="p-4 px-6 bg-white/80 border-2 border-green-200 rounded-2xl text-[10px] font-black uppercase shadow-lg min-w-[140px] flex justify-between items-center gap-4">
+                      {filterRegCat} <span>▼</span>
+                  </button>
+                  {isRegDropOpen && (
+                      <div className="absolute top-full mt-2 w-full bg-white border-2 border-green-100 rounded-xl shadow-2xl z-50 overflow-hidden">
+                          <div className="max-h-[250px] overflow-y-auto custom-dropdown-scroll">
+                            {categoriesReg.map(cat => (
+                                <div key={cat} onClick={() => { setFilterRegCat(cat); setPageReg(1); setIsRegDropOpen(false); }} className="p-3 text-[10px] font-black uppercase hover:bg-green-50 cursor-pointer border-b border-green-50 last:border-none">
+                                    {cat}
+                                </div>
+                            ))}
+                          </div>
+                      </div>
+                  )}
+                </div>
 
-              <div className="relative w-60">
-                <input type="text" placeholder="Cari nama..." value={searchReg} onChange={(e) => { setSearchReg(e.target.value); setPageReg(1); }} className="w-full p-3 pl-10 bg-white/80 border border-green-200 rounded-2xl text-xs font-bold outline-none shadow-sm focus:bg-white" />
-                <span className="absolute left-4 top-3.5">🔍</span>
+              <div className="relative flex-grow md:w-64">
+                <input type="text" placeholder="Cari nama..." value={searchReg} onChange={(e) => { setSearchReg(e.target.value); setPageReg(1); }} className="w-full p-4 pl-12 bg-white/80 border-2 border-green-200 rounded-2xl text-xs font-bold outline-none shadow-lg focus:border-green-900" />
+                <span className="absolute left-4 top-4 text-lg">🔍</span>
               </div>
             </div>
           </div>
           
-          <div className="bg-white/80 backdrop-blur-xl p-8 rounded-[2.5rem] shadow-2xl border border-green-200 mb-8 font-bold">
-            <form onSubmit={submitReg} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <input type="text" placeholder="Nama Dokumen" value={regTitle} onChange={e => setRegTitle(e.target.value)} required className="p-4 bg-white/50 rounded-2xl outline-none border-2 border-transparent focus:border-green-600 shadow-inner" />
-              <div className="relative">
-                <input type="text" list="reg-cats" placeholder="Kategori" value={regCategory} onChange={e => setRegCategory(e.target.value)} required className="w-full p-4 bg-white/50 rounded-2xl outline-none border-2 border-transparent focus:border-green-600 shadow-inner" />
+          <div className="bg-white/80 backdrop-blur-xl p-10 rounded-[3rem] shadow-2xl border-2 border-green-200 mb-10 font-bold">
+            <form onSubmit={submitReg} className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase ml-2 text-[#2d5a27]">Nama Dokumen</label>
+                <input type="text" placeholder="Contoh: PP No. 12 Tahun 2024" value={regTitle} onChange={e => setRegTitle(e.target.value)} required className="w-full p-4 bg-white rounded-2xl outline-none border-2 border-green-50 focus:border-green-600 shadow-inner" />
+              </div>
+              <div className="space-y-2 relative">
+                <label className="text-[10px] font-black uppercase ml-2 text-[#2d5a27]">Kategori</label>
+                <input type="text" list="reg-cats" placeholder="Pilih/Ketik..." value={regCategory} onChange={e => setRegCategory(e.target.value)} required className="w-full p-4 bg-white rounded-2xl outline-none border-2 border-green-50 focus:border-green-600 shadow-inner" />
                 <datalist id="reg-cats">
                   {categoriesReg.filter(c => c !== 'Semua').map((cat, i) => <option key={i} value={cat} />)}
                 </datalist>
               </div>
-              <input type="text" placeholder="Link PDF" value={regFileUrl} onChange={e => setRegFileUrl(e.target.value)} required className="p-4 bg-white/50 rounded-2xl outline-none border-2 border-transparent focus:border-green-600 shadow-inner" />
-              <button type="submit" className="md:col-span-3 py-4 bg-green-900 text-white rounded-2xl font-black uppercase shadow-xl hover:scale-[1.01] transition-transform">{editingItem ? "Update Peraturan" : "Tambah Peraturan ✅"}</button>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase ml-2 text-[#2d5a27]">Link URL PDF</label>
+                <input type="text" placeholder="https://..." value={regFileUrl} onChange={e => setRegFileUrl(e.target.value)} required className="w-full p-4 bg-white rounded-2xl outline-none border-2 border-green-50 focus:border-green-600 shadow-inner" />
+              </div>
+              <button type="submit" className="md:col-span-3 py-5 bg-[#2d5a27] text-white rounded-2xl font-black uppercase shadow-xl hover:bg-[#1f3f1b] hover:translate-y-[-2px] transition-all">
+                {editingItem ? "Update Dokumen Sekarang 📂" : "Arsipkan Peraturan Baru ✅"}
+              </button>
             </form>
           </div>
 
-          <div className="bg-white/70 backdrop-blur-lg rounded-[2.5rem] shadow-xl border border-green-100 overflow-hidden font-bold">
+          <div className="bg-white/70 backdrop-blur-lg rounded-[3rem] shadow-xl border-2 border-green-100 overflow-hidden font-bold">
             <table className="w-full text-left">
-              <thead className="bg-green-900 text-[10px] font-black uppercase text-green-100 tracking-widest">
-                <tr><th className="p-4">Nama Dokumen</th><th className="p-4 text-right">Aksi</th></tr>
+              <thead className="bg-[#2d5a27] text-[10px] font-black uppercase text-green-100 tracking-widest">
+                <tr><th className="p-6 px-8">Nama Dokumen</th><th className="p-6 px-8 text-right">Aksi</th></tr>
               </thead>
-              <tbody className="divide-y divide-green-50">
+              <tbody className="divide-y-2 divide-green-50">
                 {currentRegs.map((rg) => (
-                  <tr key={rg.id} className="hover:bg-green-50/50 transition-all font-black">
-                    <td className="p-4 text-sm font-black">{rg.title} <span className="text-[10px] bg-green-100 text-green-900 px-2 py-0.5 rounded ml-2 font-black uppercase border border-green-200">{rg.category}</span></td>
-                    <td className="p-4 text-right space-x-3">
-                      <button onClick={() => openEdit(rg, 'reg')} className="text-green-800 text-xs font-black">Edit</button>
-                      <button onClick={() => handleDelete('regulations', rg.id)} className="text-red-600 text-xs font-black">Hapus</button>
+                  <tr key={rg.id} className="hover:bg-green-50/80 transition-all font-black">
+                    <td className="p-6 px-8">
+                        <div className="text-base text-[#4a3728] font-black uppercase">{rg.title}</div>
+                        <span className="text-[9px] bg-green-100 text-green-900 px-3 py-1 rounded-full font-black uppercase border border-green-200 inline-block mt-2">📁 {rg.category}</span>
+                    </td>
+                    <td className="p-6 px-8 text-right space-x-6">
+                      <button onClick={() => openEdit(rg, 'reg')} className="text-green-800 text-[10px] font-black uppercase hover:underline">Edit</button>
+                      <button onClick={() => handleDelete('regulations', rg.id)} className="text-red-600 text-[10px] font-black uppercase hover:underline">Hapus</button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            <div className="p-4 bg-green-900/5 flex justify-center items-center gap-4 border-t border-green-100">
-               <button disabled={pageReg === 1} onClick={() => setPageReg(p => p - 1)} className="px-4 py-2 bg-white border border-green-200 rounded-xl text-[10px] font-black disabled:opacity-30">PREV</button>
-               <span className="text-[10px] font-black text-green-900 uppercase">HAL {pageReg} / {totalPagesReg}</span>
-               <button disabled={pageReg >= totalPagesReg} onClick={() => setPageReg(p => p + 1)} className="px-4 py-2 bg-white border border-green-200 rounded-xl text-[10px] font-black disabled:opacity-30">NEXT</button>
+            <div className="p-6 bg-green-900/5 flex justify-center items-center gap-10 border-t-2 border-green-100">
+                <button disabled={pageReg === 1} onClick={() => setPageReg(p => p - 1)} className="px-6 py-2 bg-white border-2 border-green-200 rounded-xl text-[10px] font-black disabled:opacity-30">PREV</button>
+                <span className="text-xs font-black text-green-900 uppercase">HAL {pageReg} / {totalPagesReg}</span>
+                <button disabled={pageReg >= totalPagesReg} onClick={() => setPageReg(p => p + 1)} className="px-6 py-2 bg-white border-2 border-green-200 rounded-xl text-[10px] font-black disabled:opacity-30">NEXT</button>
             </div>
           </div>
         </section>
