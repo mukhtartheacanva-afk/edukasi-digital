@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react' // Tambah useRef
 import { supabase } from '@/lib/supabase'
 import Sidebar from '@/components/Sidebar'
 
@@ -10,6 +10,8 @@ export default function PeraturanPage() {
   // State Search & Filter
   const [searchTerm, setSearchTerm] = useState('')
   const [filterCategory, setFilterCategory] = useState('Semua')
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false) // State untuk buka tutup dropdown
+  const dropdownRef = useRef<HTMLDivElement>(null)
   
   // State Pagination
   const [currentPage, setCurrentPage] = useState(1)
@@ -17,6 +19,14 @@ export default function PeraturanPage() {
 
   useEffect(() => {
     fetchData()
+    // Menutup dropdown jika klik di luar area
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
   const fetchData = async () => {
@@ -88,21 +98,45 @@ export default function PeraturanPage() {
             </div>
           </header>
 
-          {/* Filter Area */}
+          {/* Filter Area - CUSTOM DROPDOWN */}
           <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-            <div className="flex items-center gap-4 bg-[#fdf8f1] p-3 px-6 rounded-2xl border-2 border-[#e5d3b3] shadow-sm">
+            <div className="flex items-center gap-4" ref={dropdownRef}>
               <span className="text-[10px] font-black text-[#8b7355] uppercase tracking-widest">Kategori:</span>
-              <div className="relative">
-                <select 
-                  value={filterCategory}
-                  onChange={(e) => { setFilterCategory(e.target.value); setCurrentPage(1); }}
-                  className="appearance-none bg-transparent pr-8 text-xs font-black uppercase outline-none cursor-pointer text-[#2d5a27]"
+              
+              <div className="relative w-64">
+                {/* Trigger Button */}
+                <button 
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="w-full flex items-center justify-between bg-[#fdf8f1] p-3 px-6 rounded-2xl border-2 border-[#e5d3b3] shadow-sm text-xs font-black uppercase text-[#2d5a27] transition-all hover:border-[#2d5a27]"
                 >
-                  {categories.map(cat => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
-                </select>
-                <span className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-[8px] text-[#2d5a27]">▼</span>
+                  <span className="truncate">{filterCategory}</span>
+                  <span className={`transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : 'rotate-0'}`}>▼</span>
+                </button>
+
+                {/* Dropdown Menu (Custom) */}
+                {isDropdownOpen && (
+                  <div className="absolute top-full left-0 w-full mt-2 bg-white border-2 border-[#e5d3b3] rounded-2xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="max-h-60 overflow-y-auto custom-scrollbar font-bold">
+                      {categories.map((cat) => (
+                        <div 
+                          key={cat}
+                          onClick={() => {
+                            setFilterCategory(cat);
+                            setCurrentPage(1);
+                            setIsDropdownOpen(false);
+                          }}
+                          className={`p-4 px-6 text-[11px] uppercase cursor-pointer transition-colors border-b border-[#f3e9dc] last:border-none
+                            ${filterCategory === cat 
+                              ? 'bg-[#2d5a27] text-white' 
+                              : 'hover:bg-[#f3e9dc] text-[#4a3728]'
+                            }`}
+                        >
+                          {cat}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -113,7 +147,7 @@ export default function PeraturanPage() {
 
           {/* Daftar Dokumen (Table Style) */}
           <div className="bg-[#fdf8f1] rounded-[3rem] shadow-xl border-2 border-[#e5d3b3] overflow-hidden">
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto text-black">
               <table className="w-full text-left border-collapse">
                 <thead className="bg-[#2d5a27] text-[10px] font-black uppercase text-white tracking-widest">
                   <tr>
@@ -146,8 +180,8 @@ export default function PeraturanPage() {
                             {item.category || 'Umum'}
                           </span>
                         </td>
-                        <td className="p-8 text-right">
-                          <div className="flex justify-end gap-3">
+                        <td className="p-8 text-right text-black">
+                          <div className="flex justify-end gap-3 text-black">
                             <a 
                               href={item.file_url} 
                               target="_blank" 
@@ -187,9 +221,9 @@ export default function PeraturanPage() {
               >
                 ← Prev
               </button>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 text-black">
                 <span className="w-10 h-10 flex items-center justify-center bg-[#2d5a27] text-white rounded-full font-black text-sm shadow-md">{currentPage}</span>
-                <span className="text-[#8b7355] font-black text-[10px] uppercase opacity-40">dari {totalPages}</span>
+                <span className="text-[#8b7355] font-black text-[10px] uppercase opacity-40 text-black">dari {totalPages}</span>
               </div>
               <button 
                 disabled={currentPage >= totalPages} 
