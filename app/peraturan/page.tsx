@@ -1,4 +1,4 @@
- 'use client'
+'use client'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Sidebar from '@/components/Sidebar'
@@ -41,130 +41,164 @@ export default function PeraturanPage() {
   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem)
 
   if (loading) return (
-    <div className="flex justify-center items-center h-screen font-black text-amber-900 bg-[#e3d0ba]">
-      <div className="animate-bounce">MEMUAT DOKUMEN... 📂</div>
+    <div className="flex justify-center items-center h-screen font-black text-[#2d5a27] bg-[#f0f4f0]">
+      <div className="animate-bounce flex flex-col items-center gap-4">
+        <span className="text-4xl">📂</span>
+        <span className="tracking-widest uppercase text-xs">Menyusun Dokumen...</span>
+      </div>
     </div>
   )
 
   return (
-    <div className="min-h-screen flex text-black">
+    <div className="min-h-screen flex text-[#4a3728]">
       <Sidebar />
       
-      {/* MAIN CONTAINER DENGAN MOTIF KAYU */}
-      <main className="flex-grow ml-20 md:ml-72 p-4 md:p-8 pb-32 transition-all duration-300 relative min-h-screen">
-        {/* Layer Background Kayu (Fixed) */}
+      {/* MAIN CONTAINER */}
+      <main className="flex-grow ml-20 md:ml-72 p-4 md:p-10 pb-32 transition-all duration-300 relative min-h-screen bg-[#f0f4f0]">
+        
+        {/* Layer Background Halus */}
         <div 
-          className="fixed inset-0 z-[-1]" 
+          className="fixed inset-0 z-0 opacity-[0.04] pointer-events-none" 
           style={{ 
-            backgroundImage: `url('https://www.transparenttextures.com/patterns/wood-pattern.png')`,
-            backgroundColor: '#e3d0ba',
+            backgroundImage: `url('https://www.transparenttextures.com/patterns/leaf.png')`,
             backgroundRepeat: 'repeat'
           }}
         />
-        {/* Layer Overlay Halus */}
-        <div className="fixed inset-0 z-[-1] bg-white/10 pointer-events-none" />
 
-        <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6 relative z-10">
-          <div>
-            <h1 className="text-4xl font-black italic uppercase tracking-tighter drop-shadow-sm text-amber-950">Pusat Peraturan 📂</h1>
-            <p className="text-amber-900 font-bold text-xs uppercase mt-1 tracking-widest">Cari dan unduh dokumen resmi dengan mudah.</p>
-          </div>
+        <div className="relative z-10 max-w-6xl mx-auto">
+          <header className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-8 border-b-4 border-[#e5d3b3] pb-10">
+            <div>
+              <div className="flex items-center gap-4 mb-2">
+                <span className="text-5xl">📖</span>
+                <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter text-[#2d5a27]">Arsip Regulasi</h1>
+              </div>
+              <p className="text-[#8b7355] font-bold text-xs uppercase tracking-[0.2em] ml-1">Pusat dokumen resmi dan pedoman digital SI-DUGI.</p>
+            </div>
 
-          {/* Search Bar (Glass Style) */}
-          <div className="relative w-full md:w-80">
-            <input 
-              type="text" 
-              placeholder="Cari judul peraturan..." 
-              value={searchTerm}
-              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-              className="w-full p-4 pl-12 bg-white/80 backdrop-blur-md rounded-2xl shadow-xl border border-white/50 outline-none focus:bg-white font-bold text-xs transition-all"
-            />
-            <span className="absolute left-4 top-4">🔍</span>
-          </div>
-        </header>
+            {/* Search Bar (Wood Tone) */}
+            <div className="relative w-full md:w-96 group">
+              <input 
+                type="text" 
+                placeholder="Cari judul peraturan..." 
+                value={searchTerm}
+                onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                className="w-full p-5 pl-14 bg-white rounded-2xl shadow-md border-2 border-[#e5d3b3] outline-none focus:border-[#2d5a27] font-bold text-sm transition-all text-[#4a3728] placeholder:text-[#cbb493]"
+              />
+              <span className="absolute left-5 top-5 text-xl group-focus-within:scale-110 transition-transform">🔍</span>
+            </div>
+          </header>
 
-        {/* Filter Area */}
-        <div className="flex flex-col md:flex-row items-center gap-4 mb-8 relative z-10 font-bold">
-          <div className="flex items-center gap-3 bg-white/70 backdrop-blur-md p-2 px-4 rounded-2xl border border-white/50 shadow-lg w-full md:w-auto">
-            <span className="text-[10px] font-black text-amber-900 uppercase tracking-widest">Kategori:</span>
-            <div className="relative flex-grow">
-              <select 
-                value={filterCategory}
-                onChange={(e) => { setFilterCategory(e.target.value); setCurrentPage(1); }}
-                className="appearance-none w-full bg-transparent pr-8 text-[11px] font-black uppercase outline-none cursor-pointer text-amber-900"
-              >
-                {categories.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
-              <span className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-[8px]">▼</span>
+          {/* Filter Area */}
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+            <div className="flex items-center gap-4 bg-[#fdf8f1] p-3 px-6 rounded-2xl border-2 border-[#e5d3b3] shadow-sm">
+              <span className="text-[10px] font-black text-[#8b7355] uppercase tracking-widest">Kategori:</span>
+              <div className="relative">
+                <select 
+                  value={filterCategory}
+                  onChange={(e) => { setFilterCategory(e.target.value); setCurrentPage(1); }}
+                  className="appearance-none bg-transparent pr-8 text-xs font-black uppercase outline-none cursor-pointer text-[#2d5a27]"
+                >
+                  {categories.map(cat => (
+                    <option key={cat} value={cat}>{cat}</option>
+                  ))}
+                </select>
+                <span className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-[8px] text-[#2d5a27]">▼</span>
+              </div>
+            </div>
+
+            <div className="px-6 py-3 bg-[#2d5a27] text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg">
+              {filteredData.length} Dokumen Tersedia
             </div>
           </div>
 
-          <div className="px-4 py-3 bg-amber-900 text-amber-100 rounded-2xl text-[10px] font-black uppercase whitespace-nowrap shadow-lg">
-            {filteredData.length} Dokumen Ditemukan
-          </div>
-        </div>
-
-        {/* Daftar Dokumen (Glass Table) */}
-        <div className="bg-white/70 backdrop-blur-xl rounded-[2.5rem] shadow-2xl border border-white/50 overflow-hidden relative z-10">
-          <table className="w-full text-left border-collapse">
-            <thead className="bg-amber-950 text-[10px] font-black uppercase text-amber-100 tracking-widest">
-              <tr>
-                <th className="p-6">Detail Dokumen</th>
-                <th className="p-6">Kategori</th>
-                <th className="p-6 text-right">Aksi</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-amber-100 font-bold">
-              {currentItems.length > 0 ? (
-                currentItems.map((item) => (
-                  <tr key={item.id} className="hover:bg-white/40 transition-all group font-bold">
-                    <td className="p-6">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-red-100 text-red-600 flex items-center justify-center rounded-xl font-black text-[10px] group-hover:scale-110 transition-transform shadow-sm border border-red-200">PDF</div>
-                        <div>
-                          <p className="font-black text-sm text-amber-950 leading-tight">{item.title}</p>
-                          <p className="text-[10px] text-amber-700 font-bold mt-1 uppercase">Diunggah: {new Date(item.created_at).toLocaleDateString('id-ID')}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="p-6">
-                      <span className="px-3 py-1 bg-amber-100 text-amber-900 rounded-lg text-[10px] font-black uppercase tracking-tighter border border-amber-200">
-                        {item.category}
-                      </span>
-                    </td>
-                    <td className="p-6 text-right space-x-2">
-                      <a href={item.file_url} target="_blank" className="inline-block px-4 py-2 bg-white/80 border border-amber-200 rounded-xl text-[10px] font-black uppercase hover:bg-white transition-colors shadow-sm">Pratinjau</a>
-                      <a href={item.file_url} download className="inline-block px-4 py-2 bg-amber-900 text-white rounded-xl text-[10px] font-black uppercase shadow-lg hover:bg-amber-800 transition-all active:scale-95">Unduh</a>
-                    </td>
+          {/* Daftar Dokumen (Table Style) */}
+          <div className="bg-[#fdf8f1] rounded-[3rem] shadow-xl border-2 border-[#e5d3b3] overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead className="bg-[#2d5a27] text-[10px] font-black uppercase text-white tracking-widest">
+                  <tr>
+                    <th className="p-8">Nama Dokumen</th>
+                    <th className="p-8">Kategori</th>
+                    <th className="p-8 text-right">Aksi</th>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={3} className="p-20 text-center text-amber-900 font-black text-xs uppercase tracking-widest">Tidak ada dokumen yang ditemukan</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                </thead>
+                <tbody className="divide-y-2 divide-[#f3e9dc]">
+                  {currentItems.length > 0 ? (
+                    currentItems.map((item) => (
+                      <tr key={item.id} className="hover:bg-white transition-all group">
+                        <td className="p-8">
+                          <div className="flex items-center gap-6">
+                            <div className="w-14 h-14 bg-red-50 text-red-600 flex flex-col items-center justify-center rounded-2xl font-black text-[9px] group-hover:scale-110 transition-transform shadow-sm border border-red-100 uppercase tracking-tighter">
+                              <span className="text-xl mb-[-4px]">📄</span>
+                              PDF
+                            </div>
+                            <div>
+                              <p className="font-black text-base text-[#4a3728] leading-tight group-hover:text-[#2d5a27] transition-colors uppercase italic">{item.title}</p>
+                              <p className="text-[10px] text-[#8b7355] font-bold mt-2 uppercase flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 bg-[#2d5a27] rounded-full"></span>
+                                Rilis: {new Date(item.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                              </p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="p-8">
+                          <span className="px-4 py-1.5 bg-[#e5d3b3]/40 text-[#4a3728] rounded-full text-[10px] font-black uppercase tracking-widest border border-[#e5d3b3]">
+                            {item.category || 'Umum'}
+                          </span>
+                        </td>
+                        <td className="p-8 text-right">
+                          <div className="flex justify-end gap-3">
+                            <a 
+                              href={item.file_url} 
+                              target="_blank" 
+                              className="px-6 py-3 bg-white border-2 border-[#e5d3b3] rounded-xl text-[10px] font-black uppercase hover:border-[#2d5a27] hover:text-[#2d5a27] transition-all shadow-sm"
+                            >
+                              Buka
+                            </a>
+                            <a 
+                              href={item.file_url} 
+                              download 
+                              className="px-6 py-3 bg-[#2d5a27] text-white rounded-xl text-[10px] font-black uppercase shadow-md hover:bg-[#1f3f1b] transition-all active:scale-95"
+                            >
+                              Unduh
+                            </a>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={3} className="p-24 text-center">
+                        <div className="opacity-20 text-6xl mb-4 grayscale">📂</div>
+                        <p className="text-[#8b7355] font-black text-xs uppercase tracking-[0.4em] italic">Arsip tidak ditemukan</p>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
 
-          {/* PAGINATION CONTROL */}
-          <div className="p-6 bg-amber-900/5 flex justify-center items-center gap-6 border-t border-amber-100">
-            <button 
-              disabled={currentPage === 1} 
-              onClick={() => { setCurrentPage(p => p - 1); window.scrollTo({top: 0, behavior: 'smooth'}); }}
-              className="px-5 py-2 bg-white/80 border border-amber-200 rounded-xl text-[10px] font-black disabled:opacity-30 hover:bg-white transition-all shadow-sm"
-            >
-              PREV
-            </button>
-            <span className="text-[10px] font-black text-amber-900 uppercase tracking-widest">Halaman {currentPage} / {totalPages}</span>
-            <button 
-              disabled={currentPage >= totalPages} 
-              onClick={() => { setCurrentPage(p => p + 1); window.scrollTo({top: 0, behavior: 'smooth'}); }}
-              className="px-5 py-2 bg-white/80 border border-amber-200 rounded-xl text-[10px] font-black disabled:opacity-30 hover:bg-white transition-all shadow-sm"
-            >
-              NEXT
-            </button>
+            {/* PAGINATION CONTROL */}
+            <div className="p-8 bg-[#f3e9dc]/50 flex justify-center items-center gap-10 border-t-2 border-[#f3e9dc]">
+              <button 
+                disabled={currentPage === 1} 
+                onClick={() => { setCurrentPage(p => p - 1); window.scrollTo({top: 0, behavior: 'smooth'}); }}
+                className="px-8 py-3 bg-white border-2 border-[#e5d3b3] rounded-2xl text-[10px] font-black disabled:opacity-30 hover:border-[#2d5a27] hover:text-[#2d5a27] transition-all shadow-sm uppercase flex items-center gap-2"
+              >
+                ← Prev
+              </button>
+              <div className="flex items-center gap-3">
+                <span className="w-10 h-10 flex items-center justify-center bg-[#2d5a27] text-white rounded-full font-black text-sm shadow-md">{currentPage}</span>
+                <span className="text-[#8b7355] font-black text-[10px] uppercase opacity-40">dari {totalPages}</span>
+              </div>
+              <button 
+                disabled={currentPage >= totalPages} 
+                onClick={() => { setCurrentPage(p => p + 1); window.scrollTo({top: 0, behavior: 'smooth'}); }}
+                className="px-8 py-3 bg-white border-2 border-[#e5d3b3] rounded-2xl text-[10px] font-black disabled:opacity-30 hover:border-[#2d5a27] hover:text-[#2d5a27] transition-all shadow-sm uppercase flex items-center gap-2"
+              >
+                Next →
+              </button>
+            </div>
           </div>
         </div>
       </main>
