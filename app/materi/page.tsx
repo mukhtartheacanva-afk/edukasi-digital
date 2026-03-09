@@ -1,4 +1,4 @@
- 'use client'
+'use client'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
@@ -12,9 +12,9 @@ export default function MateriPage() {
   const router = useRouter()
 
   const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 8 // Kita naikkan ke 8 supaya pas dengan baris isi 4 card
+  const itemsPerPage = 8 
 
-  // Fungsi ambil Thumbnail YouTube Otomatis
+  // Fungsi ambil Thumbnail YouTube Otomatis (Tetap Aman)
   const getYouTubeThumbnail = (url: string) => {
     try {
       const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -22,9 +22,9 @@ export default function MateriPage() {
       const videoId = (match && match[2].length === 11) ? match[2] : null;
       return videoId 
         ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` 
-        : 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=2070&auto=format&fit=crop';
+        : 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2071&auto=format&fit=crop';
     } catch (e) {
-      return 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=2070&auto=format&fit=crop';
+      return 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2071&auto=format&fit=crop';
     }
   }
 
@@ -74,57 +74,62 @@ export default function MateriPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#e3d0ba] text-amber-950 font-black italic uppercase tracking-tighter">
-        <div className="animate-bounce mr-3 text-2xl">📚</div> Mempersiapkan Kelas...
+      <div className="flex min-h-screen items-center justify-center bg-[#f0f4f0] text-green-900 font-black italic uppercase tracking-tighter">
+        <div className="animate-bounce mr-3 text-2xl">🌱</div> Membuka Gerbang Hutan Ilmu...
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen flex bg-[#e3d0ba]">
+    <div className="min-h-screen flex bg-[#f0f4f0]">
       <Sidebar />
 
-      {/* Main Content: Jarak ml-20 md:ml-72 agar mepet sidebar dinamis */}
-      <main className="flex-grow ml-20 md:ml-72 p-4 md:p-8 pb-32 transition-all duration-300 relative min-h-screen">
+      {/* Main Content */}
+      <main className="flex-grow ml-20 md:ml-72 p-4 md:p-10 pb-32 transition-all duration-300 relative min-h-screen">
         
-        {/* Wood Texture Background */}
+        {/* Subtle Leaf/Nature Texture Background Overlay */}
         <div 
-          className="fixed inset-0 z-0 opacity-100 pointer-events-none" 
+          className="fixed inset-0 z-0 opacity-[0.03] pointer-events-none" 
           style={{ 
-            backgroundImage: `url('https://www.transparenttextures.com/patterns/wood-pattern.png')`,
+            backgroundImage: `url('https://www.transparenttextures.com/patterns/leaf.png')`,
             backgroundRepeat: 'repeat'
           }}
         />
 
         <div className="relative z-10 max-w-[1600px] mx-auto">
-          <header className="mb-10 flex flex-col xl:flex-row xl:items-center justify-between gap-6">
+          {/* Header Section dengan Nuansa Hijau & Kayu */}
+          <header className="mb-12 flex flex-col xl:flex-row xl:items-end justify-between gap-6 border-b-4 border-[#e5d3b3] pb-8">
             <div>
-              <h1 className="text-3xl md:text-4xl font-black text-amber-950 tracking-tight italic uppercase">Katalog Materi 🚀</h1>
-              <p className="text-amber-900 mt-1 font-bold text-[9px] uppercase tracking-[0.2em] opacity-60">
-                Temukan materi terbaik untuk meningkatkan keahlianmu.
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-4xl">🌳</span>
+                <h1 className="text-4xl md:text-5xl font-black text-[#2d5a27] tracking-tight uppercase">Hutan Materi</h1>
+              </div>
+              <p className="text-[#8b7355] font-bold text-xs uppercase tracking-[0.2em] ml-1">
+                Jelajahi pengetahuan di ekosistem digital SI-DUGI.
               </p>
             </div>
 
-            <div className="relative w-full xl:w-80">
-              <span className="absolute inset-y-0 left-4 flex items-center opacity-40">🔍</span>
+            {/* Search Bar Estetik */}
+            <div className="relative w-full xl:w-96 group">
+              <span className="absolute inset-y-0 left-4 flex items-center group-focus-within:scale-110 transition-transform">🔍</span>
               <input 
                 type="text"
-                placeholder="Cari materi..."
-                className="w-full pl-10 pr-4 py-3.5 bg-white/50 backdrop-blur-md border border-white/40 rounded-2xl shadow-xl focus:bg-white outline-none transition-all text-black font-black text-[10px] uppercase"
+                placeholder="Cari ilmu di sini..."
+                className="w-full pl-12 pr-4 py-4 bg-white rounded-2xl shadow-md border-2 border-[#e5d3b3] focus:border-[#2d5a27] outline-none transition-all text-[#4a3728] font-bold placeholder:text-[#cbb493]"
                 value={searchTerm}
                 onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
               />
             </div>
           </header>
 
-          {/* Filter Bar */}
-          <div className="flex flex-wrap items-center gap-3 mb-10">
-            <div className="flex items-center gap-3 bg-white/30 backdrop-blur-md p-2 px-4 rounded-xl border border-white/40 shadow-sm">
-              <span className="text-[8px] font-black text-amber-950 uppercase tracking-widest">Kategori:</span>
+          {/* Filter & Info Bar */}
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-10">
+            <div className="flex items-center gap-4 bg-[#fdf8f1] p-3 px-6 rounded-2xl border-2 border-[#e5d3b3] shadow-sm">
+              <span className="text-[10px] font-black text-[#8b7355] uppercase tracking-widest">Kategori :</span>
               <select 
                 value={filterCategory}
                 onChange={(e) => { setFilterCategory(e.target.value); setCurrentPage(1); }}
-                className="bg-transparent text-[10px] font-black uppercase outline-none cursor-pointer text-amber-950"
+                className="bg-transparent text-sm font-black uppercase outline-none cursor-pointer text-[#2d5a27] focus:ring-0"
               >
                 {categories.map(cat => (
                   <option key={cat} value={cat}>{cat}</option>
@@ -132,85 +137,85 @@ export default function MateriPage() {
               </select>
             </div>
 
-            <div className="px-4 py-2.5 bg-amber-950/90 text-amber-50 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-lg">
-              {filteredData.length} Hasil
+            <div className="px-6 py-3 bg-[#2d5a27] text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg flex items-center gap-2">
+              <span className="animate-pulse text-green-300">●</span> {filteredData.length} Materi Tersedia
             </div>
           </div>
 
           {currentItems.length > 0 ? (
             <>
-              {/* Grid 4 Kolom: 2xl:grid-cols-4 */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-5 md:gap-6">
+              {/* Grid 4 Kolom dengan Card Bergaya Kayu/Alam */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8">
                 {currentItems.map((lesson, index) => (
                   <div 
                     key={lesson.id} 
-                    className="group bg-white/60 backdrop-blur-xl rounded-[2.2rem] p-2.5 shadow-2xl border border-white/30 hover:border-amber-600 transition-all duration-500 flex flex-col h-full overflow-hidden"
+                    className="group bg-[#fdf8f1] rounded-[2.5rem] p-4 shadow-xl border-2 border-[#e5d3b3] hover:border-[#2d5a27] hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 flex flex-col h-full overflow-hidden relative"
                   >
                     {/* Thumbnail Area */}
-                    <div className="aspect-video w-full bg-amber-900 rounded-[1.8rem] mb-3 overflow-hidden relative shadow-inner">
+                    <div className="aspect-video w-full bg-[#e5d3b3] rounded-[2rem] mb-4 overflow-hidden relative border-4 border-white shadow-md">
                       <img 
                         src={getYouTubeThumbnail(lesson.video_url)} 
                         alt={lesson.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-amber-950/40 via-transparent to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#2d5a27]/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                       
-                      {/* Badge Nomor Materi */}
-                      <span className="absolute bottom-3 left-5 z-10 text-3xl font-black text-white/20 italic">
-                        #{(currentPage - 1) * itemsPerPage + index + 1}
-                      </span>
-                      
-                      {/* Label Kategori di Atas Gambar */}
-                      <div className="absolute top-3 right-3 bg-amber-950/80 backdrop-blur-md px-2.5 py-1 rounded-full text-[7px] font-black text-amber-100 uppercase tracking-widest border border-white/10">
+                      {/* Label Kategori */}
+                      <div className="absolute top-3 right-3 bg-[#2d5a27] text-white px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border border-green-400/30">
                         {lesson.category || 'Umum'}
                       </div>
                     </div>
 
                     {/* Content Area */}
-                    <div className="px-3 pb-4 flex-grow flex flex-col">
-                      <h3 className="text-sm md:text-base font-black text-amber-950 mb-1 group-hover:text-amber-800 transition-colors leading-tight uppercase italic tracking-tighter line-clamp-1">
+                    <div className="px-2 pb-2 flex-grow flex flex-col">
+                      <h3 className="text-lg font-black text-[#4a3728] mb-2 group-hover:text-[#2d5a27] transition-colors leading-tight uppercase line-clamp-2">
                         {lesson.title}
                       </h3>
-                      <p className="text-amber-900/60 text-[9px] leading-relaxed line-clamp-2 mb-4 font-bold h-7 italic">
-                        {lesson.description || "Tonton video pembelajaran premium ini sekarang."}
+                      <p className="text-[#8b7355] text-[11px] leading-relaxed line-clamp-2 mb-6 font-medium italic">
+                        {lesson.description || "Tonton video pembelajaran premium ini sekarang di katalog SI-DUGI."}
                       </p>
                       
                       <button 
                         onClick={() => router.push(`/materi/${lesson.id}`)}
-                        className="mt-auto w-full py-3.5 bg-amber-950 text-amber-50 rounded-2xl font-black text-[8px] tracking-[0.3em] hover:bg-amber-800 transition-all active:scale-95 uppercase shadow-xl border border-white/10"
+                        className="mt-auto w-full py-4 bg-[#2d5a27] text-white rounded-2xl font-black text-[10px] tracking-[0.2em] hover:bg-[#1f3f1b] transition-all active:scale-95 uppercase shadow-md flex items-center justify-center gap-2"
                       >
-                        Mulai Belajar
+                        Mulai Belajar <span>🌿</span>
                       </button>
                     </div>
                   </div>
                 ))}
               </div>
 
-              {/* Pagination */}
-              <div className="mt-16 flex justify-center items-center gap-6">
+              {/* Pagination Estetik */}
+              <div className="mt-20 flex justify-center items-center gap-8">
                 <button 
                   disabled={currentPage === 1} 
                   onClick={() => { setCurrentPage(p => p - 1); window.scrollTo({top: 0, behavior: 'smooth'}); }}
-                  className="px-6 py-2.5 bg-white/40 backdrop-blur-sm border border-white/50 rounded-xl text-[9px] font-black disabled:opacity-20 hover:bg-amber-100 transition-all shadow-md text-amber-950 uppercase"
+                  className="px-8 py-3 bg-white border-2 border-[#e5d3b3] rounded-2xl text-[10px] font-black disabled:opacity-30 hover:bg-[#fdf8f1] hover:border-[#2d5a27] transition-all shadow-sm text-[#4a3728] uppercase flex items-center gap-2"
                 >
-                  Prev
+                  ← Prev
                 </button>
-                <span className="text-[9px] font-black text-amber-950 uppercase tracking-[0.3em]">
-                  {currentPage} / {totalPages}
-                </span>
+                <div className="flex items-center gap-2">
+                   <span className="w-10 h-10 flex items-center justify-center bg-[#2d5a27] text-white rounded-full font-black text-sm shadow-md">
+                     {currentPage}
+                   </span>
+                   <span className="text-[#8b7355] font-black text-xs uppercase opacity-40">dari {totalPages}</span>
+                </div>
                 <button 
                   disabled={currentPage >= totalPages} 
                   onClick={() => { setCurrentPage(p => p + 1); window.scrollTo({top: 0, behavior: 'smooth'}); }}
-                  className="px-6 py-2.5 bg-white/40 backdrop-blur-sm border border-white/50 rounded-xl text-[9px] font-black disabled:opacity-20 hover:bg-amber-100 transition-all shadow-md text-amber-950 uppercase"
+                  className="px-8 py-3 bg-white border-2 border-[#e5d3b3] rounded-2xl text-[10px] font-black disabled:opacity-30 hover:bg-[#fdf8f1] hover:border-[#2d5a27] transition-all shadow-sm text-[#4a3728] uppercase flex items-center gap-2"
                 >
-                  Next
+                  Next →
                 </button>
               </div>
             </>
           ) : (
-            <div className="bg-white/10 backdrop-blur-md rounded-[3rem] p-20 text-center border-2 border-dashed border-amber-900/10">
-              <div className="text-6xl mb-4 opacity-30">🏜️</div>
-              <p className="text-amber-950 font-black text-[10px] uppercase tracking-[0.4em] opacity-40 italic">Materi tidak ditemukan</p>
+            /* Empty State */
+            <div className="bg-white/50 backdrop-blur-md rounded-[4rem] p-24 text-center border-4 border-dashed border-[#e5d3b3]">
+              <div className="text-7xl mb-6 opacity-40 grayscale">🌵</div>
+              <h3 className="text-[#4a3728] font-black text-xl uppercase tracking-widest">Belum Ada Tunas Ilmu</h3>
+              <p className="text-[#8b7355] mt-2 font-bold italic">Materi yang kamu cari tidak ditemukan di hutan ini.</p>
             </div>
           )}
         </div>
