@@ -145,7 +145,7 @@ export default function MateriPage() {
           {currentItems.length > 0 ? (
             <>
               {/* Grid 4 Kolom dengan Card Bergaya Kayu/Alam */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8">
+              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8">
                 {currentItems.map((lesson, index) => (
                   <div 
                     key={lesson.id} 
