@@ -81,11 +81,11 @@ export default function MateriPage() {
   }
 
   return (
-    <div className="min-h-screen flex bg-[#f0f4f0]">
+    <div className="min-h-screen flex bg-[#f0f4f0] overflow-x-hidden">
       <Sidebar />
 
       {/* Main Content */}
-      <main className="flex-grow pl-20 md:ml-72 p-4 md:p-10 pb-32 transition-all duration-300 relative min-h-screen w-full">
+      <main className="flex-grow ml-20 md:ml-72 p-4 md:p-10 pb-32 transition-all duration-300 relative min-h-screen w-full">
         
         {/* Subtle Leaf/Nature Texture Background Overlay */}
         <div 
@@ -96,7 +96,7 @@ export default function MateriPage() {
           }}
         />
 
-        <div className="relative z-10 max-w-full mx-auto overflow-hidde">
+        <div className="relative z-10 max-w-full mx-auto overflow-hidden">
           {/* Header Section dengan Nuansa Hijau & Kayu */}
           <header className="mb-12 flex flex-col xl:flex-row xl:items-end justify-between gap-6 border-b-4 border-[#e5d3b3] pb-8">
             <div>
