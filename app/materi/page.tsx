@@ -98,24 +98,27 @@ export default function MateriPage() {
 
         <div className="relative z-10 max-w-full mx-auto overflow-hidden">
           {/* Header Section dengan Nuansa Hijau & Kayu */}
-          <header className="mb-12 flex flex-col xl:flex-row xl:items-end justify-between gap-6 border-b-4 border-[#e5d3b3] pb-8">
+          {/* Header Section yang Lebih Tipis */}
+          <header className="mb-6 flex flex-col xl:flex-row xl:items-end justify-between gap-3 border-b-2 border-[#e5d3b3] pb-4">
             <div>
-              <div className="flex items-center gap-3 mb-2">
-                <span className="text-4xl">🌳</span>
-                <h1 className="text-4xl md:text-5xl font-black text-[#2d5a27] tracking-tight uppercase">Hutan Materi</h1>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-2xl md:text-4xl">🌳</span>
+                <h1 className="text-xl md:text-5xl font-black text-[#2d5a27] tracking-tight uppercase">
+                  Hutan Materi
+                </h1>
               </div>
-              <p className="text-[#8b7355] font-bold text-xs uppercase tracking-[0.2em] ml-1">
-                Jelajahi pengetahuan di ekosistem digital SI-DUGI.
+              <p className="text-[#8b7355] font-bold text-[8px] md:text-xs uppercase tracking-[0.1em] ml-1">
+                Ekosistem Digital SI-DUGI.
               </p>
             </div>
 
-            {/* Search Bar Estetik */}
-            <div className="relative w-full xl:w-96 group">
-              <span className="absolute inset-y-0 left-4 flex items-center group-focus-within:scale-110 transition-transform">🔍</span>
+            {/* Search Bar yang Lebih Pendek */}
+            <div className="relative w-full xl:w-80 group">
+              <span className="absolute inset-y-0 left-3 flex items-center text-xs">🔍</span>
               <input 
                 type="text"
-                placeholder="Cari ilmu di sini..."
-                className="w-full pl-12 pr-4 py-4 bg-white rounded-2xl shadow-md border-2 border-[#e5d3b3] focus:border-[#2d5a27] outline-none transition-all text-[#4a3728] font-bold placeholder:text-[#cbb493]"
+                placeholder="Cari ilmu..."
+                className="w-full pl-10 pr-4 py-2 bg-white rounded-xl shadow-sm border-2 border-[#e5d3b3] focus:border-[#2d5a27] outline-none text-[10px] md:text-sm font-bold text-[#4a3728]"
                 value={searchTerm}
                 onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
               />
