@@ -149,11 +149,11 @@ export default function MateriPage() {
             <>
               {/* Grid 4 Kolom dengan Card Bergaya Kayu/Alam */}
               {/* Grid yang lebih rapat */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 md:gap-8">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 md:gap-8">
                 {currentItems.map((lesson) => (
                   <div 
                     key={lesson.id} 
-                    className="group bg-[#fdf8f1] rounded-[1.5rem] p-2 md:p-4 shadow-lg border-2 border-[#e5d3b3] hover:border-[#2d5a27] transition-all flex flex-col h-full overflow-hidden"
+                    className="group bg-[#fdf8f1] rounded-[1.5rem] p-2 md:p-4 shadow-lg border-2 border-[#e5d3b3] hover:border-[#2d5a27] transition-all flex flex-col h-full w-full max-w-full overflow-hidden"
                   >
                     {/* Thumbnail lebih kecil */}
                     <div className="aspect-video w-full bg-[#e5d3b3] rounded-[1rem] mb-2 overflow-hidden relative border-2 border-white">
