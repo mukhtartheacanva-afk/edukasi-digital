@@ -145,39 +145,36 @@ export default function MateriPage() {
           {currentItems.length > 0 ? (
             <>
               {/* Grid 4 Kolom dengan Card Bergaya Kayu/Alam */}
-              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-2 md:gap-8">
-                {currentItems.map((lesson, index) => (
+              {/* Grid yang lebih rapat */}
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 md:gap-8">
+                {currentItems.map((lesson) => (
                   <div 
                     key={lesson.id} 
-                    className="group bg-[#fdf8f1] rounded-xl p-2 shadow-xl border-2 border-[#e5d3b3] hover:border-[#2d5a27] hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 flex flex-col h-full overflow-hidden relative"
+                    className="group bg-[#fdf8f1] rounded-[1.5rem] p-2 md:p-4 shadow-lg border-2 border-[#e5d3b3] hover:border-[#2d5a27] transition-all flex flex-col h-full overflow-hidden"
                   >
-                    {/* Thumbnail Area */}
-                    <div className="aspect-video w-full bg-[#e5d3b3] rounded-[2rem] mb-4 overflow-hidden relative border-4 border-white shadow-md">
+                    {/* Thumbnail lebih kecil */}
+                    <div className="aspect-video w-full bg-[#e5d3b3] rounded-[1rem] mb-2 overflow-hidden relative border-2 border-white">
                       <img 
                         src={getYouTubeThumbnail(lesson.video_url)} 
-                        alt={lesson.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        className="w-full h-full object-cover"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#2d5a27]/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                      
-                      {/* Label Kategori */}
-                      <div className="absolute top-3 right-3 bg-[#2d5a27] text-white px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border border-green-400/30">
+                      <div className="absolute top-1.5 right-1.5 bg-[#2d5a27] text-white px-2 py-0.5 rounded-full text-[6px] font-black uppercase tracking-widest">
                         {lesson.category || 'Umum'}
                       </div>
                     </div>
 
-                    {/* Content Area */}
-                    <div className="px-2 pb-2 flex-grow flex flex-col">
-                      <h3 className="text-sm font-black text-[#4a3728] mb-2 group-hover:text-[#2d5a27] transition-colors leading-tight uppercase line-clamp-2">
+                    {/* Teks dengan ukuran font lebih kecil (Efek Zoom Out) */}
+                    <div className="px-1 pb-1 flex-grow flex flex-col">
+                      <h3 className="text-[10px] md:text-lg font-black text-[#4a3728] mb-1 leading-tight uppercase line-clamp-2">
                         {lesson.title}
                       </h3>
-                      <p className="text-[#8b7355] text-[9px] leading-relaxed line-clamp-2 mb-6 font-medium italic">
-                        {lesson.description || "Tonton video pembelajaran premium ini sekarang di katalog SI-DUGI."}
+                      <p className="text-[#8b7355] text-[8px] md:text-[11px] leading-tight line-clamp-2 mb-3 font-medium italic">
+                        {lesson.description || "Tonton video pembelajaran premium ini."}
                       </p>
                       
                       <button 
                         onClick={() => router.push(`/materi/${lesson.id}`)}
-                        className="mt-auto w-full py-4 bg-[#2d5a27] text-white rounded-2xl font-black text-[10px] tracking-[0.2em] hover:bg-[#1f3f1b] transition-all active:scale-95 uppercase shadow-md flex items-center justify-center gap-2"
+                        className="mt-auto w-full py-2 bg-[#2d5a27] text-white rounded-xl font-black text-[8px] tracking-widest uppercase shadow-md flex items-center justify-center gap-1"
                       >
                         Mulai Belajar <span>🌿</span>
                       </button>
