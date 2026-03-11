@@ -96,7 +96,7 @@ export default function MateriPage() {
           }}
         />
 
-        <div className="relative z-10 max-w-full mx-auto">
+        <div className="relative z-10 max-w-full mx-auto overflow-hidde">
           {/* Header Section dengan Nuansa Hijau & Kayu */}
           <header className="mb-12 flex flex-col xl:flex-row xl:items-end justify-between gap-6 border-b-4 border-[#e5d3b3] pb-8">
             <div>
