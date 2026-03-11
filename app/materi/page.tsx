@@ -85,7 +85,7 @@ export default function MateriPage() {
       <Sidebar />
 
       {/* Main Content */}
-      <main className="flex-grow ml-20 md:ml-72 p-4 md:p-10 pb-32 transition-all duration-300 relative min-h-screen">
+      <main className="flex-grow pl-20 md:ml-72 p-4 md:p-10 pb-32 transition-all duration-300 relative min-h-screen w-full">
         
         {/* Subtle Leaf/Nature Texture Background Overlay */}
         <div 
