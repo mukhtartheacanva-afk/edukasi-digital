@@ -85,7 +85,7 @@ export default function MateriPage() {
       <Sidebar />
 
       {/* Main Content */}
-      <main className="flex-grow ml-20 md:ml-72 p-4 md:p-10 pb-32 transition-all duration-300 relative min-h-screen w-full">
+      <main className="flex-grow ml-20 md:ml-72 p-2 md:p-10 pb-32 transition-all duration-300 relative min-h-screen w-full">
         
         {/* Subtle Leaf/Nature Texture Background Overlay */}
         <div 
@@ -145,11 +145,11 @@ export default function MateriPage() {
           {currentItems.length > 0 ? (
             <>
               {/* Grid 4 Kolom dengan Card Bergaya Kayu/Alam */}
-              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8">
+              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-2 md:gap-8">
                 {currentItems.map((lesson, index) => (
                   <div 
                     key={lesson.id} 
-                    className="group bg-[#fdf8f1] rounded-[2.5rem] p-4 shadow-xl border-2 border-[#e5d3b3] hover:border-[#2d5a27] hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 flex flex-col h-full overflow-hidden relative"
+                    className="group bg-[#fdf8f1] rounded-xl p-2 shadow-xl border-2 border-[#e5d3b3] hover:border-[#2d5a27] hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 flex flex-col h-full overflow-hidden relative"
                   >
                     {/* Thumbnail Area */}
                     <div className="aspect-video w-full bg-[#e5d3b3] rounded-[2rem] mb-4 overflow-hidden relative border-4 border-white shadow-md">
@@ -168,10 +168,10 @@ export default function MateriPage() {
 
                     {/* Content Area */}
                     <div className="px-2 pb-2 flex-grow flex flex-col">
-                      <h3 className="text-lg font-black text-[#4a3728] mb-2 group-hover:text-[#2d5a27] transition-colors leading-tight uppercase line-clamp-2">
+                      <h3 className="text-sm font-black text-[#4a3728] mb-2 group-hover:text-[#2d5a27] transition-colors leading-tight uppercase line-clamp-2">
                         {lesson.title}
                       </h3>
-                      <p className="text-[#8b7355] text-[11px] leading-relaxed line-clamp-2 mb-6 font-medium italic">
+                      <p className="text-[#8b7355] text-[9px] leading-relaxed line-clamp-2 mb-6 font-medium italic">
                         {lesson.description || "Tonton video pembelajaran premium ini sekarang di katalog SI-DUGI."}
                       </p>
                       
