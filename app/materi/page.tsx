@@ -128,7 +128,7 @@ export default function MateriPage() {
           {/* Filter & Info Bar */}
           <div className="flex flex-wrap items-center justify-between gap-2 mb-10">
             <div className="flex items-center gap-2 bg-[#fdf8f1] p-2 px-2 rounded-2xl border-2 border-[#e5d3b3] shadow-sm">
-              <span className="text-[10px] font-black text-[#8b7355] uppercase tracking-widest">Kategori :</span>
+              <span className="text-[8px] font-black text-[#8b7355] uppercase tracking-widest">Kategori:</span>
               <select 
                 value={filterCategory}
                 onChange={(e) => { setFilterCategory(e.target.value); setCurrentPage(1); }}
@@ -149,7 +149,7 @@ export default function MateriPage() {
             <>
               {/* Grid 4 Kolom dengan Card Bergaya Kayu/Alam */}
               {/* Grid yang lebih rapat */}
-              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 md:gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 md:gap-8">
                 {currentItems.map((lesson) => (
                   <div 
                     key={lesson.id} 
